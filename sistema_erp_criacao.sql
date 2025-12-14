@@ -31,7 +31,10 @@ CREATE TABLE setor (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(20) NOT NULL,
     descricao text,
-    empresa_id INT NOT NULL -- foreign key empresa
+    empresa_id INT NOT NULL,
+
+    CONSTRAINT fk_empresa_id_setor
+        FOREIGN KEY empresa_id(id) references empresa(id)
 );
 
 CREATE TABLE nivel_formacao (
@@ -181,4 +184,83 @@ CREATE TABLE fornecedor (
         FOREIGN KEY id_empresa(id) REFERENCES empresa(id),
     CONSTRAINT fk_tipo_fornecedor_id
         FOREIGN KEY tipo_fornecedor_id(id) REFERENCES tipo_fornecedor(id)
+);
+
+CREATE TABLE cidade (
+    id INT(10) PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    codigo_ibge INT(10) NOT NULL,
+    nome2 VARCHAR(100)
+);
+
+CREATE TABLE banco (
+    id INT(10) PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    url VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE cep (
+    id INT(10) PRIMARY KEY AUTO_INCREMENT,
+    cep VARCHAR(8) NOT NULL,
+    complemento VARCHAR(100) NOT NULL,
+    logradouro VARCHAR(100) NOT NULL,
+    bairro VARCHAR(50) NOT NULL,
+    cidade_id INT(10) NOT NULL,
+
+    CONSTRAINT fk_cidade_id
+        FOREIGN KEY cidade_id(id) REFERENCES cidade(id)
+);
+
+-- Tabela associativa entre cep e banco
+CREATE TABLE agencia_banco (
+    id INT(10) PRIMARY KEY AUTO_INCREMENT,
+    codigo INT(10) NOT NULL,
+    nome VARCHAR(100) NOT NULL,
+    endereco VARCHAR(100) NOT NULL,
+    telefone VARCHAR(10) NOT NULL,
+    gerente VARCHAR(30) NOT NULL,
+    contato VARCHAR(30),
+    obs TEXT,
+    cep_id INT(10) NOT NULL,
+    banco_id INT(10) NOT NULL,
+
+    CONSTRAINT fk_cep_id
+        FOREIGN KEY cep_id(id) REFERENCES cep(id),
+    CONSTRAINT fk_banco_id
+        FOREIGN KEY banco_id(id) REFERENCES banco(id)
+);
+
+
+CREATE TABLE tipo_endereco (
+    id INT(10) PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(20) NOT NULL,
+    descricao TEXT
+);
+
+CREATE TABLE endereco (
+    id INT(10) PRIMARY KEY AUTO_INCREMENT,
+    logradouro VARCHAR(100) NOT NULL,
+    numero INT(10) NOT NULL,
+    complemento VARCHAR(100) NOT NULL,
+    bairro VARCHAR(50) NOT NULL,
+    dono CHAR(1) NOT NULL,
+    empresa_id INT(10) NOT NULL,
+    colaborador_id INT(10) NOT NULL,
+    fornecedor_id INT(10) NOT NULL,
+    cliente_id INT(10) NOT NULL,
+    tipo_endereco_id INT(10) NOT NULL,
+    cep_id INT(10) NOT NULL,
+
+    CONSTRAINT fk_empresa_id_endereco
+        FOREIGN KEY empresa_id(id) references empresa(id),
+    CONSTRAINT fk_colaborador_id
+        FOREIGN KEY colaborador_id(id) references colaborador(id),
+    CONSTRAINT fk_fornecedor_id_endereco
+        FOREIGN KEY fornecedor_id(id) REFERENCES fornecedor(id),
+    CONSTRAINT fk_cliente_id
+        FOREIGN KEY cliente_id(id) REFERENCES cliente(id),
+    CONSTRAINT fk_tipo_endereco_id
+        FOREIGN KEY tipo_endereco_id(id) REFERENCES tipo_endereco(id),
+    CONSTRAINT fk_cep_id
+        FOREIGN KEY cep_id(id) REFERENCES cep(id)
 );
